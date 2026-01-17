@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Miniver&family=Outfit:wght@100..900&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@import "tailwindcss";
+
+@theme{
+  --color-primary: #256325EB;
+  --color-secondary: #FBBF24;
+}
+
+*{
+  font-family: Outfit;
+}
+
+.font-playfair {
+  font-family: Playfair !important;
+} 
