@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from './components/Navbar'
 import {Route, Routes, useLocation } from 'react-router-dom'
 import Home from './pages/Home.jsx'
+import Footer from './components/Footer.jsx'
 
 const App = () => {
 
@@ -15,6 +16,7 @@ const App = () => {
         </Routes>
 
       </div>
+      <Footer/>
     </div>
   )
 }
