@@ -1,8 +1,8 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { roomsDummyData, assets, facilityIcons } from '../assets/assets'
 import StarRating from '../components/StarRating'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 const Checkbox = ({label,selected = false, onChange = () => {} } )  => { 
     return (
@@ -25,7 +25,14 @@ const RadioButton = ({label,selected = false, onChange = () => {} } )  => {
 
 const AllRooms = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [openFilters, setOpenFilters] = useState(false)
+
+    // Get search parameters from URL
+    const destination = searchParams.get('destination');
+    const checkIn = searchParams.get('checkIn');
+    const checkOut = searchParams.get('checkOut');
+    const guests = searchParams.get('guests');
 
     const roomTypes = [
         "Single Bed",
@@ -47,6 +54,37 @@ const AllRooms = () => {
         'Newest First'
 
     ];
+
+    // Filter rooms based on search criteria
+    const filteredRooms = useMemo(() => {
+        let filtered = [...roomsDummyData];
+
+        // Filter by destination
+        if (destination) {
+            filtered = filtered.filter(room => 
+                room.hotel.city.toLowerCase().includes(destination.toLowerCase()) ||
+                room.hotel.name.toLowerCase().includes(destination.toLowerCase()) ||
+                room.hotel.address.toLowerCase().includes(destination.toLowerCase())
+            );
+        }
+
+        // Filter by guest count
+        if (guests) {
+            const guestCount = parseInt(guests);
+            filtered = filtered.filter(room => {
+                // Assuming rooms can accommodate based on their type
+                if (room.type === 'Single Bed') return guestCount <= 1;
+                if (room.type === 'Double Bed') return guestCount <= 2;
+                if (room.type === 'Family Suite') return guestCount <= 4;
+                if (room.type === 'Luxury Room') return guestCount <= 3;
+                return true;
+            });
+        }
+
+        return filtered;
+    }, [destination, guests]);
+
+    const hasSearchParams = destination || checkIn || checkOut || guests;
             
   return (
     
@@ -58,7 +96,32 @@ const AllRooms = () => {
             <p className='text-sm md:text-base text-gray-500/90 mt-2 max-w-174'>Take advantage of our limited-time offers and special packages to enhance your stay and create unforgettable memories.  </p>
         </div>
 
-        {roomsDummyData.map((room) =>(
+        {/* Search results info */}
+        {hasSearchParams && (
+            <div className='bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6'>
+                <p className='text-sm font-medium text-gray-700'>
+                    Showing results for:
+                    {destination && <span className='ml-2 text-blue-600'>📍 {destination}</span>}
+                    {checkIn && <span className='ml-2 text-blue-600'>📅 Check-in: {checkIn}</span>}
+                    {checkOut && <span className='ml-2 text-blue-600'>📅 Check-out: {checkOut}</span>}
+                    {guests && <span className='ml-2 text-blue-600'>👥 {guests} guest(s)</span>}
+                </p>
+                <p className='text-sm text-gray-600 mt-1'>Found {filteredRooms.length} room(s)</p>
+            </div>
+        )}
+
+        {filteredRooms.length === 0 ? (
+            <div className='py-20 text-center'>
+                <p className='text-xl text-gray-500'>No rooms found matching your search criteria.</p>
+                <button 
+                    onClick={() => navigate('/rooms')}
+                    className='mt-4 px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800'
+                >
+                    View All Rooms
+                </button>
+            </div>
+        ) : (
+            filteredRooms.map((room) =>(
             <div key={room._id} className = 'flex flex-col md:flex-row items-start py-10 gap-6 border-b border-gray-300 last:pb-30 last:border-0'>
                 <img onClick={() => {navigate(`/rooms/${room._id}`); scrollTo(0,0)}}
                  src = {room.images[0]} alt="hotel-img" title='view Room Details' className='max-h-65 md:w-1/2 rounded-xl shadow-lg object-cover cursor-pointer'/>
@@ -93,7 +156,8 @@ const AllRooms = () => {
                 </div>
             </div>
             
-        ))}
+        ))
+        )}
     </div>
 
      {/*Filters*/}

@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Hero = () => {
+  const navigate = useNavigate();
+  const [destination, setDestination] = useState('');
+  const [checkIn, setCheckIn] = useState('');
+  const [checkOut, setCheckOut] = useState('');
+  const [guests, setGuests] = useState('');
+
   const cities = [
     'New York',
     'London',
@@ -19,13 +26,28 @@ const Hero = () => {
     'Hong Kong'
   ];
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    
+    // Build query parameters from form data
+    const params = new URLSearchParams();
+    if (destination) params.append('destination', destination);
+    if (checkIn) params.append('checkIn', checkIn);
+    if (checkOut) params.append('checkOut', checkOut);
+    if (guests) params.append('guests', guests);
+    
+    // Navigate to rooms page with search parameters
+    navigate(`/rooms?${params.toString()}`);
+    scrollTo(0, 0);
+  };
+
   return (
     <div className='flex flex-col items-start justify-center px-6 md:px-16 lg:px-24 xl:px-32 text-white bg-[url("/src/assets/heroImage.png")] bg-no-repeat bg-cover bg-center h-screen'>
       <p className = 'bg-[#49B9FF]/50 px-3.5 py-1 rounded-full mt-20'>The Ultimate Hotel Experience</p>
-      <h1 className = 'font-playfair text-2xl md:text-5xl md:text-[56px] md:leading-[56px] font-bold md:font-extrabold max-w-xl mt-4'>Discover Your Perfect Gateway Destination</h1>
+      <h1 className = 'font-playfair text-2xl md:text-5xl md:text-[56px] md:leading-14 font-bold md:font-extrabold max-w-xl mt-4'>Discover Your Perfect Gateway Destination</h1>
       <p className = 'max-w-130 mt-2 text-sm md:text-base'>Unparalleled Luxury and comfort await at the world's most exclusive hotels and resorts. Start your journey  today. </p>
     
-      <form className='bg-white text-gray-500 rounded-lg px-6 py-4  mt-8 flex flex-col md:flex-row max-md:items-start gap-4 max-md:mx-auto'>
+      <form onSubmit={handleSearch} className='bg-white text-gray-500 rounded-lg px-6 py-4  mt-8 flex flex-col md:flex-row max-md:items-start gap-4 max-md:mx-auto'>
 
             <div>
                 <div className='flex items-center gap-2'>
@@ -34,7 +56,15 @@ const Hero = () => {
                     </svg>
                     <label htmlFor="destinationInput">Destination</label>
                 </div>
-                <input list='destinations' id="destinationInput" type="text" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" placeholder="Type here" required />
+                <input 
+                    list='destinations' 
+                    id="destinationInput" 
+                    type="text" 
+                    className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" 
+                    placeholder="Type here" 
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
+                />
                 <datalist id='destinations'>
                     {cities.map((city,index) => (
 
@@ -52,7 +82,13 @@ const Hero = () => {
                     </svg>
                     <label htmlFor="checkIn">Check in</label>
                 </div>
-                <input id="checkIn" type="date" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" />
+                <input 
+                    id="checkIn" 
+                    type="date" 
+                    className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" 
+                    value={checkIn}
+                    onChange={(e) => setCheckIn(e.target.value)}
+                />
             </div>
 
             <div>
@@ -62,15 +98,30 @@ const Hero = () => {
                     </svg>
                     <label htmlFor="checkOut">Check out</label>
                 </div>
-                <input id="checkOut" type="date" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" />
+                <input 
+                    id="checkOut" 
+                    type="date" 
+                    className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none" 
+                    value={checkOut}
+                    onChange={(e) => setCheckOut(e.target.value)}
+                />
             </div>
 
             <div className='flex md:flex-col max-md:gap-2 max-md:items-center'>
                 <label htmlFor="guests">Guests</label>
-                <input min={1} max={4} id="guests" type="number" className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none  max-w-16" placeholder="0" />
+                <input 
+                    min={1} 
+                    max={4} 
+                    id="guests" 
+                    type="number" 
+                    className=" rounded border border-gray-200 px-3 py-1.5 mt-1.5 text-sm outline-none  max-w-16" 
+                    placeholder="0" 
+                    value={guests}
+                    onChange={(e) => setGuests(e.target.value)}
+                />
             </div>
 
-            <button className='flex items-center justify-center gap-1 rounded-md bg-black py-3 px-4 text-white my-auto cursor-pointer max-md:w-full max-md:py-1' >
+            <button type="submit" className='flex items-center justify-center gap-1 rounded-md bg-black py-3 px-4 text-white my-auto cursor-pointer max-md:w-full max-md:py-1' >
                 <svg className="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" >
                     <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
                 </svg>
