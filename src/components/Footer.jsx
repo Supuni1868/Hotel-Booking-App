@@ -19,7 +19,7 @@ const Footer = () => {
                         
                           <img src={assets.twitterIcon} alt="twitter-icon" className='w-6' />
                         
-                          <img src={assets.linkedinIcon} alt="linkedin-icon" className='w-6' />
+                          
                         
             
                     </div>
